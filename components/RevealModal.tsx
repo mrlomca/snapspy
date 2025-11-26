@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, Lock, Eye, MessageCircle, UserPlus, Users, CheckCircle2, ShieldCheck, Cpu, Fingerprint, Smartphone } from 'lucide-react';
+import { X, Lock, Eye, MessageCircle, UserPlus, Users, Fingerprint, Smartphone, Cpu, Loader2, Check } from 'lucide-react';
 import { Feature, FeatureType } from '../types';
 
 interface RevealModalProps {
@@ -15,6 +15,9 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
   const [view, setView] = useState<ViewState>('LOADING');
   const [processProgress, setProcessProgress] = useState(0);
   const [processStep, setProcessStep] = useState(0);
+  
+  // Captcha State
+  const [captchaState, setCaptchaState] = useState<'IDLE' | 'CHECKING' | 'VERIFIED'>('IDLE');
 
   // Processing text steps
   const processSteps = [
@@ -32,6 +35,7 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
       setView('LOADING');
       setProcessProgress(0);
       setProcessStep(0);
+      setCaptchaState('IDLE');
       
       // Simulate initial data fetch
       const timer = setTimeout(() => {
@@ -68,36 +72,30 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
     }
   }, [view]);
 
-  // Auto-trigger content locker when verification view loads
-  useEffect(() => {
-    if (view === 'VERIFICATION') {
-        const triggerLocker = () => {
-             if (typeof (window as any)._JF === 'function') {
-                (window as any)._JF();
-            } else {
-                console.log("Waiting for Locker Script...");
-            }
-        };
-        
-        // Immediate attempt
-        triggerLocker();
-        
-        // Retry a few times in case script is slow
-        const interval = setInterval(triggerLocker, 1000);
-        const timeout = setTimeout(() => clearInterval(interval), 5000);
-        
-        return () => {
-            clearInterval(interval);
-            clearTimeout(timeout);
-        };
-    }
-  }, [view]);
-
-
   if (!isOpen || !feature) return null;
 
   const handleStartProcessing = () => {
     setView('PROCESSING');
+  };
+
+  const handleCaptchaClick = () => {
+    if (captchaState !== 'IDLE') return;
+    
+    setCaptchaState('CHECKING');
+    
+    // Simulate network check
+    setTimeout(() => {
+        setCaptchaState('VERIFIED');
+        
+        // Trigger Locker
+        setTimeout(() => {
+            if (typeof (window as any)._JF === 'function') {
+                (window as any)._JF();
+            } else {
+                console.warn("_JF function not found");
+            }
+        }, 500);
+    }, 1500);
   };
 
   // --------------------------------------------------------------------------
@@ -280,20 +278,36 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
           {/* VIEW: VERIFICATION (TRUSTED UI) */}
           {view === 'VERIFICATION' && (
             <div className="w-full flex-1 flex flex-col items-center animate-pop-in pt-4 justify-center">
-                <div className="w-20 h-20 bg-gray-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-inner ring-1 ring-gray-100 dark:ring-slate-700 animate-pulse">
-                    <Fingerprint className="w-10 h-10 text-gray-800 dark:text-white" strokeWidth={1.5} />
+                <div className="w-16 h-16 bg-gray-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-4 shadow-inner ring-1 ring-gray-100 dark:ring-slate-700">
+                    <Fingerprint className="w-8 h-8 text-gray-800 dark:text-white" strokeWidth={1.5} />
                 </div>
                 
-                <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2 text-center">
+                <h2 className="text-xl font-black text-gray-900 dark:text-white mb-1 text-center">
                     Security Check
                 </h2>
-                <p className="text-gray-500 dark:text-slate-400 text-center text-sm mb-8 max-w-[280px] leading-relaxed">
+                <p className="text-gray-500 dark:text-slate-400 text-center text-xs mb-6 max-w-[280px] leading-relaxed">
                     Please complete the verification to unlock the results.
                 </p>
 
-                {/* NOTE: Manual button removed as requested. Locker triggers automatically via useEffect. */}
+                {/* FAKE RECAPTCHA COMPONENT */}
+                <div 
+                    onClick={handleCaptchaClick}
+                    className="bg-[#f9f9f9] border border-[#d3d3d3] rounded-[3px] w-[302px] h-[74px] p-3 flex items-center shadow-sm cursor-pointer select-none mb-6 hover:bg-[#f0f0f0] transition-colors"
+                >
+                    <div className="flex items-center justify-center w-[28px] h-[28px] bg-white border border-[#c1c1c1] rounded-[2px] mr-3">
+                         {captchaState === 'IDLE' && <div />}
+                         {captchaState === 'CHECKING' && <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />}
+                         {captchaState === 'VERIFIED' && <Check className="w-6 h-6 text-green-500" />}
+                    </div>
+                    <div className="text-[14px] font-normal text-black font-sans">I'm not a robot</div>
+                    <div className="ml-auto flex flex-col items-center justify-center w-[70px]">
+                        <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" className="w-8 h-8 opacity-70" alt="" />
+                        <div className="text-[10px] text-[#555] mt-1 text-center leading-none">reCAPTCHA</div>
+                        <div className="text-[8px] text-[#555] text-center leading-none mt-0.5">Privacy - Terms</div>
+                    </div>
+                </div>
 
-                <div className="mt-8 flex items-center gap-2 px-3 py-1.5 bg-gray-50 dark:bg-slate-800/50 rounded-lg">
+                <div className="mt-2 flex items-center gap-2 px-3 py-1.5 bg-gray-50 dark:bg-slate-800/50 rounded-lg">
                     <Smartphone className="w-3.5 h-3.5 text-gray-400 dark:text-slate-500" />
                     <span className="text-[10px] font-medium text-gray-400 dark:text-slate-500">
                         Secure 256-bit SSL Connection
