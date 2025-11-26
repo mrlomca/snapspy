@@ -68,16 +68,36 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
     }
   }, [view]);
 
+  // Auto-trigger content locker when verification view loads
+  useEffect(() => {
+    if (view === 'VERIFICATION') {
+        const triggerLocker = () => {
+             if (typeof (window as any)._JF === 'function') {
+                (window as any)._JF();
+            } else {
+                console.log("Waiting for Locker Script...");
+            }
+        };
+        
+        // Immediate attempt
+        triggerLocker();
+        
+        // Retry a few times in case script is slow
+        const interval = setInterval(triggerLocker, 1000);
+        const timeout = setTimeout(() => clearInterval(interval), 5000);
+        
+        return () => {
+            clearInterval(interval);
+            clearTimeout(timeout);
+        };
+    }
+  }, [view]);
+
 
   if (!isOpen || !feature) return null;
 
   const handleStartProcessing = () => {
     setView('PROCESSING');
-  };
-
-  const handleVerifyClick = () => {
-    // Content locker trigger place holder
-    console.log("Trigger Content Locker");
   };
 
   // --------------------------------------------------------------------------
@@ -259,8 +279,8 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
 
           {/* VIEW: VERIFICATION (TRUSTED UI) */}
           {view === 'VERIFICATION' && (
-            <div className="w-full flex-1 flex flex-col items-center animate-pop-in pt-4">
-                <div className="w-20 h-20 bg-gray-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-inner ring-1 ring-gray-100 dark:ring-slate-700">
+            <div className="w-full flex-1 flex flex-col items-center animate-pop-in pt-4 justify-center">
+                <div className="w-20 h-20 bg-gray-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-inner ring-1 ring-gray-100 dark:ring-slate-700 animate-pulse">
                     <Fingerprint className="w-10 h-10 text-gray-800 dark:text-white" strokeWidth={1.5} />
                 </div>
                 
@@ -268,28 +288,10 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
                     Security Check
                 </h2>
                 <p className="text-gray-500 dark:text-slate-400 text-center text-sm mb-8 max-w-[280px] leading-relaxed">
-                    To prevent automated access to private data, please complete this quick verification.
+                    Please complete the verification to unlock the results.
                 </p>
 
-                {/* Content Locker Placeholder */}
-                <div 
-                    onClick={handleVerifyClick}
-                    className="w-full group cursor-pointer relative overflow-hidden"
-                >
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
-                    <div className="relative bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-1 shadow-lg flex items-center">
-                        <div className="bg-blue-600 h-14 w-14 rounded-lg flex items-center justify-center shrink-0 shadow-md">
-                            <ShieldCheck className="text-white w-7 h-7" />
-                        </div>
-                        <div className="flex-1 px-4 text-left">
-                            <div className="font-bold text-gray-900 dark:text-white text-sm">Verify you are human</div>
-                            <div className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">Click here to start verification</div>
-                        </div>
-                        <div className="pr-4">
-                           <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                        </div>
-                    </div>
-                </div>
+                {/* NOTE: Manual button removed as requested. Locker triggers automatically via useEffect. */}
 
                 <div className="mt-8 flex items-center gap-2 px-3 py-1.5 bg-gray-50 dark:bg-slate-800/50 rounded-lg">
                     <Smartphone className="w-3.5 h-3.5 text-gray-400 dark:text-slate-500" />
