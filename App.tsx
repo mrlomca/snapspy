@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useIsMobile } from './hooks/useIsMobile';
 import DesktopBlocker from './components/DesktopBlocker';
 import MobileLayout from './components/MobileLayout';
@@ -6,9 +6,15 @@ import MobileLayout from './components/MobileLayout';
 function App() {
   const isMobile = useIsMobile();
 
-  // If you want to test the desktop view on mobile, change this condition temporarily.
+  useEffect(() => {
+    // Log current route for debugging purposes
+    const currentPath = window.location.pathname;
+    if (currentPath === '/separate') {
+      console.log('SnapSpy: Running on /separate route (Duplicate Mode)');
+    }
+  }, []);
+
   // For production, if !isMobile render DesktopBlocker.
-  
   if (!isMobile) {
     return <DesktopBlocker />;
   }
