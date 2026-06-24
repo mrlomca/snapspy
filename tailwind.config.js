@@ -4,40 +4,37 @@ export default {
     "./index.html",
     "./**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Inter', 'sans-serif'],
-        display: ['Plus Jakarta Sans', '-apple-system', 'sans-serif'],
+        sans: ['Poppins', '-apple-system', 'sans-serif'],
+        display: ['Poppins', '-apple-system', 'sans-serif'],
       },
       colors: {
-        snap: {
-          yellow: '#FFFC00',
-          amber: '#FFD60A',
-        },
-        ios: {
-          blue: '#0A84FF',
-          purple: '#BF5AF2',
-          pink: '#FF375F',
-          green: '#30D158',
-          indigo: '#5E5CE6',
-        },
+        snapbg: '#ECE04F',
+        snapbg2: '#E6D944',
+        cream: '#F4EEC9',
+        'cream-dark': '#E7DC9C',
+        snapblue: '#4FC3F7',
+        'snapblue-dark': '#36B4EF',
+        snapbrown: '#8C7B33',
+        snapink: '#161616',
+        snapgreen: '#2FAE54',
       },
       borderRadius: {
         '4xl': '2rem',
         '5xl': '2.5rem',
       },
       animation: {
-        'slide-up': 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-        'pop-in': 'popIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'fade-in-up': 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'slide-up': 'slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
+        'pop-in': 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'fade-in-up': 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'shimmer': 'shimmer 2s linear infinite',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'aurora': 'aurora 18s ease-in-out infinite',
-        'float': 'float 6s ease-in-out infinite',
-        'glow': 'glow 2.5s ease-in-out infinite',
-        'sheen': 'sheen 3.5s ease-in-out infinite',
+        'float': 'float 4.5s ease-in-out infinite',
+        'load-fill': 'loadFill 2s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'ghost-run': 'ghostRun 2s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'wiggle': 'wiggle 0.9s ease-in-out infinite',
       },
       keyframes: {
         slideUp: {
@@ -56,22 +53,21 @@ export default {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(100%)' }
         },
-        aurora: {
-          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-          '33%': { transform: 'translate(8%, -6%) scale(1.15)' },
-          '66%': { transform: 'translate(-6%, 8%) scale(0.95)' },
-        },
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-8px)' },
+          '50%': { transform: 'translateY(-7px)' },
         },
-        glow: {
-          '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
-          '50%': { opacity: '1', transform: 'scale(1.05)' },
+        loadFill: {
+          '0%': { width: '3%' },
+          '100%': { width: '92%' },
         },
-        sheen: {
-          '0%': { transform: 'translateX(-150%) skewX(-20deg)' },
-          '60%, 100%': { transform: 'translateX(250%) skewX(-20deg)' },
+        ghostRun: {
+          '0%': { left: '3%' },
+          '100%': { left: '92%' },
+        },
+        wiggle: {
+          '0%, 100%': { transform: 'translateX(-50%) rotate(-6deg)' },
+          '50%': { transform: 'translateX(-50%) rotate(6deg)' },
         }
       }
     },

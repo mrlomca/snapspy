@@ -1,6 +1,7 @@
 import React from 'react';
 
 export enum FeatureType {
+  LIVE_LOCATION = 'LIVE_LOCATION',
   SCORE_CHECKS = 'SCORE_CHECKS',
   BEST_FRIENDS = 'BEST_FRIENDS',
   EYES_ONLY = 'EYES_ONLY',
