@@ -7,8 +7,8 @@ interface PrivacyModalProps {
 }
 
 const Section = ({ title, children }: { title: string, children?: React.ReactNode }) => (
-  <div className="bg-gray-50 dark:bg-slate-800/40 p-5 rounded-xl border border-gray-100 dark:border-slate-700/50">
-    <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2 text-base">{title}</h3>
+  <div className="bg-white/45 dark:bg-white/[0.04] p-5 rounded-2xl ring-1 ring-white/40 dark:ring-white/10 backdrop-blur-sm">
+    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base">{title}</h3>
     <p className="leading-relaxed text-gray-600 dark:text-slate-400">{children}</p>
   </div>
 );
@@ -19,19 +19,19 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300" 
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-xl transition-opacity duration-300"
         onClick={onClose}
       ></div>
-      
+
       {/* Modal Content */}
-      <div className="relative w-full max-w-lg bg-white dark:bg-[#1e293b] rounded-2xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col animate-pop-in border border-gray-100 dark:border-slate-700">
-        
-        <div className="p-5 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center sticky top-0 bg-white/95 dark:bg-[#1e293b]/95 backdrop-blur z-10">
-          <h2 className="text-xl font-extrabold text-gray-900 dark:text-white">SnapSpy Privacy Policy</h2>
-          <button 
-            onClick={onClose} 
-            className="text-gray-400 hover:text-gray-600 dark:text-slate-400 dark:hover:text-white transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 active:scale-95"
+      <div className="relative w-full max-w-lg liquid-glass rounded-4xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col animate-pop-in">
+
+        <div className="p-5 border-b border-white/30 dark:border-white/10 flex justify-between items-center sticky top-0 liquid-glass-soft z-10">
+          <h2 className="font-display text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">SnapSpy Privacy Policy</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-900 dark:text-slate-400 dark:hover:text-white transition-colors p-2 rounded-full bg-white/40 dark:bg-white/10 hover:bg-white/70 dark:hover:bg-white/20 active:scale-95"
           >
             <X size={20} />
           </button>
@@ -39,7 +39,7 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
 
         <div className="p-6 overflow-y-auto no-scrollbar space-y-4 text-sm text-gray-600 dark:text-slate-300">
            <p className="text-xs text-gray-400 dark:text-slate-500 mb-2">Last updated: November 25, 2025</p>
-           
+
            <p className="mb-4">This Privacy Policy describes how your personal information is collected, used, and shared when you visit SnapSpy (the "Platform").</p>
 
            <Section title="Information We Collect">

@@ -19,3 +19,17 @@ export interface UserData {
   username: string;
   avatarUrl: string;
 }
+
+export interface SnapProfile {
+  found: boolean;
+  reason?: string;
+  username: string;
+  displayName: string;
+  avatarUrl: string | null;
+  snapcodeUrl: string | null;
+  bio: string | null;
+  subscriberCount: number | null;
+  website: string | null;
+  verified: boolean;
+  isPublicProfile: boolean;
+}

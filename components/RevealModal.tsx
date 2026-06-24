@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { X, Lock, Eye, MessageCircle, UserPlus, Users, Fingerprint, Smartphone, Cpu, Loader2, Check } from 'lucide-react';
-import { Feature, FeatureType } from '../types';
+import { Feature, FeatureType, SnapProfile } from '../types';
 
 interface RevealModalProps {
   isOpen: boolean;
   onClose: () => void;
   feature: Feature | null;
   targetUser: string;
+  profile?: SnapProfile | null;
 }
 
 type ViewState = 'LOADING' | 'PREVIEW' | 'PROCESSING' | 'VERIFICATION';
 
-const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, targetUser }) => {
+const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, targetUser, profile }) => {
   const [view, setView] = useState<ViewState>('LOADING');
   const [processProgress, setProcessProgress] = useState(0);
   const [processStep, setProcessStep] = useState(0);
@@ -158,10 +159,10 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
 
   const getModalIcon = () => {
       switch (feature.id) {
-          case FeatureType.SCORE_CHECKS: return <Users className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />;
-          case FeatureType.BEST_FRIENDS: return <UserPlus className="w-8 h-8 text-purple-600 dark:text-purple-400" />;
-          case FeatureType.EYES_ONLY: return <Eye className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />;
-          case FeatureType.CHAT_HISTORY: return <MessageCircle className="w-8 h-8 text-green-500 dark:text-green-400" />;
+          case FeatureType.SCORE_CHECKS: return <Users className="w-8 h-8 text-amber-500 dark:text-amber-300" />;
+          case FeatureType.BEST_FRIENDS: return <UserPlus className="w-8 h-8 text-fuchsia-500 dark:text-fuchsia-400" />;
+          case FeatureType.EYES_ONLY: return <Eye className="w-8 h-8 text-indigo-500 dark:text-indigo-400" />;
+          case FeatureType.CHAT_HISTORY: return <MessageCircle className="w-8 h-8 text-emerald-500 dark:text-emerald-400" />;
           default: return <Lock className="w-8 h-8 text-gray-500" />;
       }
   };
@@ -169,20 +170,23 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300"
+      <div
+        className="absolute inset-0 bg-black/55 backdrop-blur-xl transition-opacity duration-300"
         onClick={() => view !== 'PROCESSING' && onClose()}
       />
 
       {/* Modal Card */}
-      <div className="relative w-full max-w-md bg-white dark:bg-[#1e293b] rounded-t-[32px] sm:rounded-3xl p-6 shadow-2xl animate-slide-up sm:animate-pop-in mb-0 sm:mb-4 mx-0 sm:mx-4 overflow-hidden border-t border-white/20 dark:border-slate-700 transition-colors duration-300">
-        
+      <div className="relative w-full max-w-md liquid-glass glass-sheen rounded-t-[36px] sm:rounded-5xl p-6 animate-slide-up sm:animate-pop-in mb-0 sm:mb-4 mx-0 sm:mx-4 overflow-hidden transition-colors duration-300">
+
+        {/* Grab handle (iOS sheet) */}
+        <div className="sm:hidden absolute top-2.5 left-1/2 -translate-x-1/2 w-10 h-1.5 rounded-full bg-gray-400/40 dark:bg-white/20" />
+
         {view !== 'PROCESSING' && view !== 'VERIFICATION' && (
-            <button 
+            <button
                 onClick={onClose}
-                className="absolute top-5 right-5 text-gray-300 hover:text-gray-500 dark:text-slate-600 dark:hover:text-slate-400 p-2 active:scale-95 transition-transform"
+                className="absolute top-5 right-5 z-20 text-gray-400 hover:text-gray-700 dark:text-slate-400 dark:hover:text-white p-2 rounded-full bg-white/40 dark:bg-white/10 active:scale-95 transition-all"
             >
-                <X size={24} />
+                <X size={20} />
             </button>
         )}
 
@@ -192,48 +196,65 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
           {view === 'LOADING' && (
              <div className="flex-1 flex flex-col items-center justify-center w-full">
                 <div className="relative">
-                    <div className="w-16 h-16 rounded-full border-4 border-gray-100 dark:border-slate-700"></div>
-                    <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-yellow-400 animate-spin"></div>
+                    <div className="absolute inset-0 w-16 h-16 rounded-full bg-snap-yellow/30 blur-xl animate-glow"></div>
+                    <div className="w-16 h-16 rounded-full border-4 border-white/40 dark:border-white/10"></div>
+                    <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-snap-yellow animate-spin"></div>
                 </div>
-                <h3 className="text-lg font-bold text-gray-800 dark:text-white mt-8 mb-2">Analyzing Request</h3>
-                <p className="text-gray-400 dark:text-slate-500 text-sm">Handshaking with server...</p>
+                <h3 className="font-display text-lg font-bold text-gray-800 dark:text-white mt-8 mb-2">Analyzing Request</h3>
+                <p className="text-gray-500 dark:text-slate-400 text-sm">Handshaking with server...</p>
              </div>
           )}
 
           {/* VIEW: PREVIEW (READY TO REVEAL) */}
           {view === 'PREVIEW' && (
             <>
-                <div className="mb-6 p-4 rounded-2xl bg-gray-50 dark:bg-slate-800/50 ring-1 ring-gray-100 dark:ring-slate-700">
-                    {getModalIcon()}
+                <div className="relative mb-5 animate-float">
+                    {profile && profile.avatarUrl ? (
+                        <div className="relative">
+                            <img
+                                src={profile.avatarUrl}
+                                alt={profile.displayName}
+                                className="w-20 h-20 rounded-3xl object-cover ring-2 ring-white/60 dark:ring-white/15 shadow-lg"
+                            />
+                            <div className="absolute -bottom-2 -right-2 p-2 rounded-2xl bg-white/80 dark:bg-slate-800/90 ring-1 ring-white/60 dark:ring-white/10 shadow-md">
+                                {React.cloneElement(getModalIcon() as React.ReactElement, { className: 'w-5 h-5' } as any)}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="p-4 rounded-3xl bg-white/55 dark:bg-white/10 ring-1 ring-white/50 dark:ring-white/10 shadow-sm">
+                            {getModalIcon()}
+                        </div>
+                    )}
                 </div>
 
-                <h2 className="text-2xl font-black text-gray-800 dark:text-white text-center mb-2 tracking-tight">
+                <h2 className="font-display text-2xl font-extrabold text-gray-900 dark:text-white text-center mb-2 tracking-tight">
                     {feature.title}
                 </h2>
-                
+
                 <p className="text-gray-500 dark:text-slate-400 text-sm text-center mb-8 px-4 leading-relaxed">
-                   Hidden data found for <span className="text-gray-800 dark:text-gray-200 font-bold">@{targetUser}</span>. <br/> Reveal to decrypt content.
+                   Hidden data found for <span className="text-gray-900 dark:text-white font-bold">{profile ? profile.displayName : `@${targetUser}`}</span>. <br/> Reveal to decrypt content.
                 </p>
 
                 {/* Blurred Content Container */}
-                <div className="w-full relative bg-gray-50/50 dark:bg-slate-900/50 rounded-2xl p-4 mb-8 border border-gray-100 dark:border-slate-800 overflow-hidden">
+                <div className="w-full relative bg-white/40 dark:bg-white/5 rounded-3xl p-4 mb-8 ring-1 ring-white/40 dark:ring-white/10 overflow-hidden">
                     {renderContentPreview()}
-                    
+
                     {/* Overlay with Lock */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 dark:bg-slate-900/60 backdrop-blur-[4px] z-10 transition-all hover:backdrop-blur-[2px]">
-                        <div className="bg-white dark:bg-slate-800 p-3.5 rounded-full shadow-lg mb-3 ring-4 ring-gray-50 dark:ring-slate-800/50">
-                            <Lock className="w-6 h-6 text-gray-800 dark:text-white" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 dark:bg-black/30 backdrop-blur-[5px] z-10 transition-all hover:backdrop-blur-[3px]">
+                        <div className="bg-gradient-to-br from-snap-yellow to-snap-amber p-3.5 rounded-full shadow-lg shadow-yellow-400/40 mb-3 ring-2 ring-white/60">
+                            <Lock className="w-6 h-6 text-black/85" />
                         </div>
-                        <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest bg-white/80 dark:bg-slate-800/80 px-4 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-slate-700">Encrypted</span>
+                        <span className="text-[10px] font-bold text-gray-700 dark:text-white uppercase tracking-widest liquid-glass-soft px-4 py-1.5 rounded-full">Encrypted</span>
                     </div>
                 </div>
 
                 <div className="w-full space-y-4">
-                    <button 
+                    <button
                         onClick={handleStartProcessing}
-                        className="w-full bg-gray-900 hover:bg-black dark:bg-white dark:hover:bg-gray-100 text-white dark:text-slate-900 font-bold text-lg py-4 rounded-xl shadow-xl shadow-gray-200 dark:shadow-slate-900/20 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
+                        className="relative w-full overflow-hidden bg-gradient-to-br from-snap-yellow to-snap-amber text-black font-bold text-lg py-4 rounded-2xl shadow-xl shadow-yellow-400/40 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 ring-1 ring-white/50"
                     >
-                        <span>Reveal Data</span>
+                        <span className="relative z-10">Reveal Data</span>
+                        <span className="absolute top-0 left-0 h-full w-1/3 bg-white/50 blur-md animate-sheen pointer-events-none" />
                     </button>
                 </div>
             </>
@@ -244,25 +265,26 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
             <div className="w-full flex-1 flex flex-col items-center justify-center py-6">
                 
                 <div className="relative w-24 h-24 mb-10">
-                    <div className="absolute inset-0 bg-yellow-400/20 dark:bg-yellow-400/10 rounded-full animate-ping"></div>
-                    <div className="absolute inset-0 border-2 border-yellow-400 rounded-full opacity-20"></div>
-                    <div className="absolute inset-0 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-xl border border-gray-100 dark:border-slate-700 relative overflow-hidden">
-                         <Cpu className="text-yellow-500 w-10 h-10 relative z-10 animate-pulse" />
-                         <div className="absolute inset-0 bg-gradient-to-t from-yellow-50/50 to-transparent dark:from-yellow-900/10" />
+                    <div className="absolute inset-0 bg-snap-yellow/25 rounded-full animate-ping"></div>
+                    <div className="absolute -inset-3 bg-snap-yellow/20 rounded-full blur-xl animate-glow"></div>
+                    <div className="absolute inset-0 border-2 border-snap-yellow rounded-full opacity-30"></div>
+                    <div className="absolute inset-0 rounded-full flex items-center justify-center liquid-glass shadow-xl overflow-hidden">
+                         <Cpu className="text-amber-500 w-10 h-10 relative z-10 animate-pulse" />
+                         <div className="absolute inset-0 bg-gradient-to-t from-yellow-200/30 to-transparent dark:from-yellow-500/10" />
                     </div>
                 </div>
 
                 <div className="w-full max-w-xs space-y-2 mb-8">
-                    <div className="flex justify-between text-xs font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider">
+                    <div className="flex justify-between text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                         <span>Progress</span>
-                        <span>{Math.round(processProgress)}%</span>
+                        <span className="text-amber-500 dark:text-yellow-400">{Math.round(processProgress)}%</span>
                     </div>
-                    <div className="w-full bg-gray-100 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
-                        <div 
-                            className="h-full bg-yellow-400 transition-all duration-100 ease-out relative"
+                    <div className="w-full bg-white/40 dark:bg-white/10 rounded-full h-2.5 overflow-hidden ring-1 ring-white/30 dark:ring-white/10">
+                        <div
+                            className="h-full bg-gradient-to-r from-snap-yellow to-snap-amber transition-all duration-100 ease-out relative"
                             style={{ width: `${processProgress}%` }}
                         >
-                            <div className="absolute inset-0 bg-white/30 w-full h-full animate-[shimmer_1s_infinite]"></div>
+                            <div className="absolute inset-0 bg-white/40 w-full h-full animate-[shimmer_1s_infinite]"></div>
                         </div>
                     </div>
                 </div>
@@ -278,11 +300,11 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
           {/* VIEW: VERIFICATION (TRUSTED UI) */}
           {view === 'VERIFICATION' && (
             <div className="w-full flex-1 flex flex-col items-center animate-pop-in pt-4 justify-center">
-                <div className="w-16 h-16 bg-gray-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-4 shadow-inner ring-1 ring-gray-100 dark:ring-slate-700">
-                    <Fingerprint className="w-8 h-8 text-gray-800 dark:text-white" strokeWidth={1.5} />
+                <div className="w-16 h-16 liquid-glass rounded-3xl flex items-center justify-center mb-4 animate-float">
+                    <Fingerprint className="w-8 h-8 text-amber-500 dark:text-yellow-400" strokeWidth={1.5} />
                 </div>
-                
-                <h2 className="text-xl font-black text-gray-900 dark:text-white mb-1 text-center">
+
+                <h2 className="font-display text-xl font-extrabold text-gray-900 dark:text-white mb-1 text-center">
                     Security Check
                 </h2>
                 <p className="text-gray-500 dark:text-slate-400 text-center text-xs mb-6 max-w-[280px] leading-relaxed">
@@ -307,16 +329,16 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
                     </div>
                 </div>
 
-                <div className="mt-2 flex items-center gap-2 px-3 py-1.5 bg-gray-50 dark:bg-slate-800/50 rounded-lg">
-                    <Smartphone className="w-3.5 h-3.5 text-gray-400 dark:text-slate-500" />
-                    <span className="text-[10px] font-medium text-gray-400 dark:text-slate-500">
+                <div className="mt-2 flex items-center gap-2 px-3 py-1.5 bg-white/45 dark:bg-white/5 rounded-full ring-1 ring-white/40 dark:ring-white/10">
+                    <Smartphone className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
+                    <span className="text-[10px] font-semibold text-gray-500 dark:text-slate-400">
                         Secure 256-bit SSL Connection
                     </span>
                 </div>
 
-                 <button 
+                 <button
                     onClick={onClose}
-                    className="mt-6 text-gray-400 dark:text-slate-500 text-xs font-medium hover:text-gray-600 p-2"
+                    className="mt-6 text-gray-400 dark:text-slate-500 text-xs font-medium hover:text-gray-600 dark:hover:text-slate-300 p-2 transition-colors"
                 >
                     Cancel Request
                 </button>
