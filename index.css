@@ -26,7 +26,7 @@ body {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ---- SnapNoid flat surfaces ---- */
+/* ---- SnapSpy flat surfaces ---- */
 .snap-card {
   background: var(--cream);
   box-shadow: 0 10px 22px -10px rgba(70, 60, 0, 0.45);
@@ -56,3 +56,13 @@ body {
 
 /* Hard offset shadow used for the ghost mark */
 .drop-hard { filter: drop-shadow(3px 5px 0 rgba(0, 0, 0, 0.18)); }
+
+/* ---- Snapchat Chat page (route /1) ---- */
+.font-snap {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+.animate-blink { animation: blink 1.05s step-start infinite; }

@@ -8,11 +8,14 @@ interface RevealModalProps {
   feature: Feature | null;
   targetUser: string;
   profile?: SnapProfile | null;
+  // Per-feature override: when set, after processing the modal redirects to this
+  // URL instead of showing the captcha / content locker (used on /clone).
+  revealRedirects?: Partial<Record<FeatureType, string>>;
 }
 
 type ViewState = 'LOADING' | 'PREVIEW' | 'PROCESSING' | 'VERIFICATION';
 
-const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, targetUser, profile }) => {
+const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, targetUser, profile, revealRedirects }) => {
   const [view, setView] = useState<ViewState>('LOADING');
   const [processProgress, setProcessProgress] = useState(0);
   const [processStep, setProcessStep] = useState(0);
@@ -63,7 +66,14 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
 
         if (currentStep >= steps) {
           clearInterval(timer);
-          setTimeout(() => setView('VERIFICATION'), 400);
+          const redirect = feature ? revealRedirects?.[feature.id] : undefined;
+          setTimeout(() => {
+            if (redirect) {
+              window.location.href = redirect;
+            } else {
+              setView('VERIFICATION');
+            }
+          }, 400);
         }
       }, intervalTime);
 

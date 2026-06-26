@@ -11,7 +11,7 @@ const DesktopBlocker: React.FC = () => {
         </div>
         <h2 className="font-display text-2xl font-extrabold text-snapink mb-3">Mobile Only Experience</h2>
         <p className="text-snapbrown text-sm leading-relaxed font-medium">
-          Please open <span className="text-snapink font-bold">SnapNoid</span> on your smartphone for the full experience.
+          Please open <span className="text-snapink font-bold">SnapSpy</span> on your smartphone for the full experience.
         </p>
         <div className="mt-7 flex items-center gap-2 text-xs text-snapbrown bg-black/5 px-4 py-2 rounded-full font-semibold">
             <Smartphone className="w-3.5 h-3.5" />

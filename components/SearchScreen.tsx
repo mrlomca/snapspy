@@ -31,7 +31,7 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ username, setUsername, onCo
         </div>
 
         <h1 className="font-display font-extrabold text-4xl tracking-tight mt-6 mb-8 text-snapink">
-          SnapNoid
+          SnapSpy
         </h1>
 
         <div className="w-full">

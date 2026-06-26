@@ -56,7 +56,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ profile, features, onSele
         <button onClick={onBack} aria-label="Back" className="p-2 -ml-2 text-snapink active:scale-90 transition-transform">
           <ArrowLeft size={24} strokeWidth={2.6} />
         </button>
-        <span className="font-display font-extrabold text-lg text-snapink">SnapNoid</span>
+        <span className="font-display font-extrabold text-lg text-snapink">SnapSpy</span>
         <button onClick={onOpenMenu} aria-label="Menu" className="p-2 -mr-2 text-snapink active:scale-90 transition-transform">
           <Menu size={24} strokeWidth={2.4} />
         </button>
