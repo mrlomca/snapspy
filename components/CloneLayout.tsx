@@ -158,6 +158,11 @@ const CloneLayout: React.FC = () => {
         targetUser={profile ? profile.username : username}
         profile={profile}
         revealRedirects={{ [FeatureType.BEST_FRIENDS]: bestFriendsImg }}
+        loadingDelay={500}
+        loadingTitle="Loading"
+        loadingSubtitle="Please wait a moment..."
+        processDuration={1300}
+        processSteps={['Loading...', 'Fetching data...', 'Almost there...']}
       />
 
       <PrivacyModal

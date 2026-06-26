@@ -2,6 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { X, Lock, Eye, MessageCircle, UserPlus, Users, MapPin, Fingerprint, Smartphone, Cpu, Loader2, Check } from 'lucide-react';
 import { Feature, FeatureType, SnapProfile } from '../types';
 
+const DEFAULT_PROCESS_STEPS = [
+  'Establishing secure connection...',
+  'Bypassing 2FA protocols...',
+  'Extracting cloud cache...',
+  'Decrypting media fragments...',
+  'Reassembling data packets...',
+  'Verifying integrity...'
+];
+
 interface RevealModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -11,27 +20,35 @@ interface RevealModalProps {
   // Per-feature override: when set, after processing the modal redirects to this
   // URL instead of showing the captcha / content locker (used on /clone).
   revealRedirects?: Partial<Record<FeatureType, string>>;
+  // Loading / processing overrides (used on /clone for a quick, plain reveal).
+  loadingDelay?: number;
+  loadingTitle?: string;
+  loadingSubtitle?: string;
+  processDuration?: number;
+  processSteps?: string[];
 }
 
 type ViewState = 'LOADING' | 'PREVIEW' | 'PROCESSING' | 'VERIFICATION';
 
-const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, targetUser, profile, revealRedirects }) => {
+const RevealModal: React.FC<RevealModalProps> = ({
+  isOpen,
+  onClose,
+  feature,
+  targetUser,
+  profile,
+  revealRedirects,
+  loadingDelay = 1500,
+  loadingTitle = 'Analyzing Request',
+  loadingSubtitle = 'Handshaking with server...',
+  processDuration = 5000,
+  processSteps = DEFAULT_PROCESS_STEPS,
+}) => {
   const [view, setView] = useState<ViewState>('LOADING');
   const [processProgress, setProcessProgress] = useState(0);
   const [processStep, setProcessStep] = useState(0);
 
   // Captcha State
   const [captchaState, setCaptchaState] = useState<'IDLE' | 'CHECKING' | 'VERIFIED'>('IDLE');
-
-  // Processing text steps
-  const processSteps = [
-    'Establishing secure connection...',
-    'Bypassing 2FA protocols...',
-    'Extracting cloud cache...',
-    'Decrypting media fragments...',
-    'Reassembling data packets...',
-    'Verifying integrity...'
-  ];
 
   // Reset state when modal opens
   useEffect(() => {
@@ -43,7 +60,7 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
 
       const timer = setTimeout(() => {
         setView('PREVIEW');
-      }, 1500);
+      }, loadingDelay);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -51,7 +68,7 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
   // Processing Simulation Logic
   useEffect(() => {
     if (view === 'PROCESSING') {
-      const totalDuration = 5000;
+      const totalDuration = processDuration;
       const intervalTime = 50;
       const steps = totalDuration / intervalTime;
       let currentStep = 0;
@@ -225,8 +242,8 @@ const RevealModal: React.FC<RevealModalProps> = ({ isOpen, onClose, feature, tar
                     <div className="w-16 h-16 rounded-full border-4 border-black/10"></div>
                     <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-snapblue animate-spin"></div>
                 </div>
-                <h3 className="font-display text-lg font-extrabold text-snapink mt-8 mb-2">Analyzing Request</h3>
-                <p className="text-snapbrown text-sm font-medium">Handshaking with server...</p>
+                <h3 className="font-display text-lg font-extrabold text-snapink mt-8 mb-2">{loadingTitle}</h3>
+                <p className="text-snapbrown text-sm font-medium">{loadingSubtitle}</p>
              </div>
           )}
 

@@ -153,6 +153,11 @@ const MobileLayout: React.FC = () => {
         feature={selectedFeature}
         targetUser={profile ? profile.username : username}
         profile={profile}
+        loadingDelay={500}
+        loadingTitle="Loading"
+        loadingSubtitle="Please wait a moment..."
+        processDuration={1300}
+        processSteps={['Loading...', 'Fetching data...', 'Almost there...']}
       />
 
       <PrivacyModal
